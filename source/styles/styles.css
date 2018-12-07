@@ -1,0 +1,32 @@
+html {
+	font-size: 100%;
+}
+
+body {
+	padding-top: 1em;
+}
+
+#displayErrors {
+	color: red;
+}
+
+#displayInfoWarn {
+	color: blue;
+}
+
+.fileupload {
+	font-size: 100%;	
+}
+
+.intro {
+	font-size: 85%;
+}
+
+.footer { 
+	text-align: center;
+}
+.footerImage {
+	text-align: center;
+	height: 1.5em;
+	width: 3em;
+}

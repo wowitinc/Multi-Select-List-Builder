@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Multi Select List Builder (MSLB)">
+    <meta name="author" content="WOWIT Enterprises Inc., D Woodworth">
+	<link rel="icon" href="images/favicon.ico">
+	<title>MSLB (WOWIT)</title>
+
+	<!--Bootstrap CSS-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<!--Font Awesome-->
+	<script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+	<!-- Custom styles -->
+	<link rel="stylesheet" href="styles/styles.css">
+</head>	
+
+<body>	
+	<div class="container-fluid">
+		<h1>Multi-Select List Builder using Bootstrap 4</h1>
+		<p class="intro">Dual Select Swap with calculation and reporting options:</p>
+		<ol class="intro">
+			<li>Customise "Status List" and "Report Categories" by adding / deleting as desired.</li>
+			<li>Move single / all items between "Status List" and "Calculations" using "Plus" button to add multiple items for "Calculations".</li>
+			<li>Customise depiction of "Calculations" items for reporting purposes.  Each row of items  in "Calculations" must have a corresponding row representation in "Report Categories" before saving.</li>
+		</ol>
+		<hr/>	
+		<div id="preListsSection" class="row ml-1">
+			<form id="saveForm" class="form-inline ml-3">
+				<button type="submit" id="mslbSaveCustomBtn" class="btn btn-secondary btn-sm" aria-label="Save current customisations to file">Save Customisation</button>	
+			</form>		
+			<form class="form-inline ml-4">
+				<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#mslbUploadCustom" aria-label="Retrieve customisations from existing file">Upload Customisation</button>
+				<!-- Modal -->
+				<div class="modal fade" id="mslbUploadCustom" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-md" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalLabel">Select the file containing the custom lists:</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Cancel">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div> <!-- modal-header -->
+							<div class="modal-body">
+								<div class="file-loading">
+									<input id="mslbUserFile" name="mslbUserFile[]" type="file" accept=".csv, .txt">
+								</div>
+<!--								<div id="wowit-file-errors"></div>-->
+							</div><!-- modal-body -->
+							<div class="modal-footer">
+								<button id="mslbUploadCancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+								<button id="mslbUploadCustomBtn" type="button" class="btn btn-success" aria-label="Upload customisations file">Save</button>
+							</div> <!-- modal-footer -->
+						</div> <!-- modal-content -->
+					</div> <!-- modal-dialog -->
+				</div> <!-- modal -->
+			</form>
+		</div>	
+		<br/>
+		<div id="displayErrors"></div>
+		<div id="displayInfoWarn"></div>
+		<div class="row ml-1">
+		
+			<!--Status List column-->
+			<div class="col-3">
+				<h4 align="center">Status List</h4>
+				<select name="status[]" id="mslbListStatus" class="form-control" size="9">
+					<option>Passed</option>
+					<option>Failed</option>
+					<option>Not Completed</option>
+					<option>No Run</option>
+					<option>N/A</option>
+					<option>Blocked</option>
+					<option>Obsolete</option>	
+					<option>On Hold</option>
+				</select>
+				<br/>
+				<form class="form-inline">
+					<button type="submit" id="mslbAddBtnStatus" class="btn btn-success btn-sm">Add</button>
+					<label class="sr-only" for="statusAdd">Add status</label>
+					<input type="text" class="form-control-sm" id="statusAdd" placeholder="Add status">
+				</form>
+				<form class="form-inline">
+					<button type="submit" id="mslbDelBtnStatus" class="btn btn-danger btn-sm">Delete status</button>
+				</form>
+			</div>
+			
+			<!--Button column for Calculations selection-->
+			<div class="col-xs-1 mt-5">
+				<button type="button" id="mslbPlusBtn" class="btn btn-primary btn-block btn-sm" aria-label="Add item in Status List to item in Calculations">Plus</button>
+				<button type="button" id="mslbRightAllBtn" class="btn btn-default btn-block btn-sm">
+					<i class="fa fa-angle-double-right"></i>
+					<span class="sr-only">Move all right</span>
+				</button>
+				<button type="button" id="mslbRightSingleBtn" class="btn btn-default btn-block btn-sm">
+					<i class="fa fa-angle-right"></i>
+					<span class="sr-only">Move item right</span>
+					</button>
+				<button type="button" id="mslbLeftSingleBtn" class="btn btn-default btn-block btn-sm">
+					<i class="fa fa-angle-left"></i>
+					<span class="sr-only">Move item left</span>
+					</button>
+				<button type="button" id="mslbLeftAllBtn" class="btn btn-default btn-block btn-sm">
+					<i class="fa fa-angle-double-left"></i>
+					<span class="sr-only">Move all left</span>
+					</button>
+			</div>
+			
+			<!--Calculations List column-->
+			<div class="col-3">
+				<h4 align="center">Calculations</h4>
+				<select name="calcs[]" id="mslbListCalcs" class="form-control" size="9"></select>
+			</div>
+			
+			<!--Button column for moving Calculations-->
+			<div class="col-xs-1 mt-5">
+				<button type="button" id="mslbUpBtn" class="btn btn-default btn-block btn-sm">
+					<i class="fa fa-angle-up"></i>
+					<span class="sr-only">Move up</span>
+					</button>
+				<button type="button" id="mslbDownBtn" class="btn btn-default btn-block btn-sm">
+					<i class="fa fa-angle-down"></i>
+					<span class="sr-only">Move down</span>
+					</button>
+			</div>
+			
+			<!--Report Categories column-->			
+			<div class="col-3">
+				<h4 align="center">Report Categories</h4>
+				<select name="report[]" id="mslbListReports" class="form-control" size="9">
+					<option>Passed</option>
+					<option>Failed</option>
+					<option>In Progress</option>
+					<option>Not Yet Run</option>
+				</select>
+					
+				<br/>
+				<form class="form-inline">
+					<button type="submit" id="mslbAddBtnReports" class="btn btn-success btn-sm">Add</button>
+					<label class="sr-only" for="repAdd">Add category</label>
+					<input type="text" class="form-control-sm" id="repAdd" placeholder="Add category">
+				</form>
+				<form class="form-inline">
+					<button type="submit" id="mslbDelBtnReports" class="btn btn-danger btn-sm">Delete category</button>
+				</form>	
+			</div>
+		</div>
+	</div>		
+
+<footer class="py-0 bg-white">
+	<div class="container">
+		<hr/>
+		<p class="m-0 footer"><img class="footerImage" src="images/wowit.jpg"></p>
+	</div>
+</footer>
+
+<!--jQuery library-->
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  
+<!--jQuery CSV library-->
+<script src="
+https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.8.9/jquery.csv.min.js"></script>
+
+<!--Popper-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<!--Compiled and minified Bootstrap JavaScript-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script src="scripts/app.js"></script>
+
+</body>
+</html>
